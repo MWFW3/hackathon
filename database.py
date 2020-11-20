@@ -8,6 +8,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS Users(userid INTEGER PRIMARY KEY AU
 cursor.execute("""CREATE TABLE IF NOT EXISTS Competences(compid INTEGER  PRIMARY KEY AUTOINCREMENT,competencename VARCHAR(255) UNIQUE);""")
 cursor.execute("""CREATE TABLE IF NOT EXISTS Questions(qusestid INTEGER PRIMARY KEY AUTOINCREMENT, question TEXT);""")
 cursor.execute("""CREATE TABLE IF NOT EXISTS UQ(id INTEGER PRIMARY KEY,userid INTEGER, qusestid INT);""")
+cursor.execute("""CREATE TABLE IF NOT EXISTS QC(id INTEGER PRIMARY KEY,questid INTEGER, competenceid INT);""")
 cursor.execute("""CREATE TABLE IF NOT EXISTS UC(id INTEGER PRIMARY KEY,userid INTEGER,compid INT);""")
 
 def addUser(username):
