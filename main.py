@@ -7,9 +7,9 @@ comps=["программирование", "unix", "программная ин�
 def start(message):
     msg="Приветствую тебя студент, здесь ты можешь задавать вопросы другим студентам или отвечать сам на то, в чём разбираешься."
     msg+="Нажми \"добавить компетенцию\", чтобы указать, чем владеешь или сразу задай вопрос"
-    markup=telebot.types.ReplyKeyboardMarkup()
-    addSkill=telebot.types.KeyboardButton("Добавить компетенцию")
-    ask=telebot.types.KeyboardButton("Задать вопрос")
+    markup=telebot.types.InlineKeyboardMarkup()
+    addSkill=telebot.types.InlineKeyboardButton("Добавить компетенцию",callback_data="/addComp")
+    ask=telebot.types.InlineKeyboardButton("Задать вопрос", callback_data="/ask")
     markup.add(addSkill,ask)
     bot.send_message(message.chat.id, msg, reply_markup=markup)
 
