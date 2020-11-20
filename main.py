@@ -56,7 +56,7 @@ def hadlerOfAny(message):
         print(dictUser[message.chat.id].Comps)
     if dictUser[message.chat.id].waitingForQuestion:
         Question=message.text
-        
+
 
 def drawMainMenu():
     markup = telebot.types.ReplyKeyboardMarkup()
