@@ -1,9 +1,10 @@
 import telebot
 from UserModule import User
+import database as db
 bot = telebot.TeleBot('1408437105:AAERPrZPLbkGoHN9HzObvYScyGBQNbwZzoY')
 
 dictUser={}
-comps=["программирование", "unix", "программная инжнерия", "ВСЁ ВЫБРАЛ"]
+comps = db.competences
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -12,6 +13,8 @@ def start(message):
     msg="Приветствую тебя студент, здесь ты можешь задавать вопросы другим студентам или отвечать сам на то, в чём разбираешься."
     msg+="Нажми \"добавить компетенцию\", чтобы указать, чем владеешь или сразу задай вопрос"
     bot.send_message(message.chat.id, msg, reply_markup=drawMainMenu())
+
+    db.addUser(str(message.chat.id))
 
 #----------------------------------------------------------------------------------------------------------
 
@@ -22,6 +25,7 @@ def addComp(message):
     markup = telebot.types.ReplyKeyboardMarkup()
     for i in comps:
         markup.add(telebot.types.KeyboardButton(i))
+    markup.add(telebot.types.KeyboardButton("ВСЁ ВЫБРАЛ"))
     bot.send_message(message.chat.id, msg, reply_markup=markup)
     print(dictUser[message.chat.id].name)
     print(dictUser[message.chat.id].inChoose)
@@ -32,6 +36,7 @@ def finishChoose(message):
         dictUser[message.chat.id].inChoose=False
     msg="Спасибо, вы выбрали компетенции"
     bot.send_message(message.chat.id, msg, reply_markup=drawMainMenu())
+    db.addCompsToUser(message.chat.username, dictUser[message.chat.id])
     print(dictUser[message.chat.id].name)
 
 #----------------------------------------------------------------------------------------------------------
@@ -39,7 +44,7 @@ def finishChoose(message):
 @bot.message_handler(func=lambda message: message.text == "Задать вопрос")
 def ask(message):
     dictUser[message.chat.id].waitingForQuestion=True
-
+    db.addQuestion(message.text)
 @bot.message_handler(commands=['reset'])
 def reset(message):
     bot.send_message(message.chat.id, "reseted", reply_markup=telebot.types.ReplyKeyboardRemove())
@@ -61,9 +66,10 @@ def hadlerOfAny(message):
 def drawMainMenu():
     markup = telebot.types.ReplyKeyboardMarkup()
     addSkill = telebot.types.KeyboardButton("Добавить компетенцию")
+    myasks = telebot.types.KeyboardButton("Мои вопросы")
     ask = telebot.types.KeyboardButton("Задать вопрос")
     answer = telebot.types.KeyboardButton("Ответить на вопрос")
-    markup.add(addSkill, ask, answer)
+    markup.add(addSkill, ask, answer,myasks)
     return markup
 
 bot.polling()
