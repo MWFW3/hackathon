@@ -1,7 +1,7 @@
 import telebot
 from UserModule import User
 import database as db
-bot = telebot.TeleBot('1408437105:AAERPrZPLbkGoHN9HzObvYScyGBQNbwZzoY')
+bot = telebot.TeleBot('')
 
 dictUser={}
 comps = db.competences
