@@ -2,7 +2,7 @@ import telebot
 import emoji
 from UserModule import User
 import database as db
-bot = telebot.TeleBot('')
+bot = telebot.TeleBot('1408437105:AAERPrZPLbkGoHN9HzObvYScyGBQNbwZzoY')
 
 #dictUser={}
 comps = db.competences
@@ -56,12 +56,14 @@ def finishChoose(message):
 
     if dictUser.inChoose:
         dictUser.inChoose=False
-    msg="Спасибо, вы выбрали компетенции"
-    bot.send_message(message.chat.id, msg, reply_markup=drawMainMenu())
+        msg="Спасибо, вы выбрали компетенции"
 
-    db.addCompsToUser(message.chat.id, dictUser.Comps)
-    dictUser.Comps = []
-    db.saveSession(message.chat.id, dictUser.exportSession())
+        db.addCompsToUser(message.chat.id, dictUser.Comps)
+        dictUser.Comps = []
+        db.saveSession(message.chat.id, dictUser.exportSession())
+    else:
+        msg="Вы ещё не выбрали свои компетенции"
+    bot.send_message(message.chat.id, msg, reply_markup=drawMainMenu())
     print(dictUser.name)
 
 #----------------------------------------------------------------------------------------------------------
@@ -88,15 +90,16 @@ def submitAskComp(message):
     if dictUser.inChooseAsk:
         dictUser.inChooseAsk=False
 
-    msg="Теперь напишите текст вашего вопроса"
-    markup = telebot.types.ReplyKeyboardMarkup()
-    markup.add('Отменить отправку вопроса')
-    markup.add('Отправить')
+        msg="Теперь напишите текст вашего вопроса"
+        markup = telebot.types.ReplyKeyboardMarkup()
+        markup.add('Отменить отправку вопроса')
+        markup.add('Отправить')
 
-    bot.send_message(message.chat.id, msg, reply_markup=markup)
-    #db.addCompsToUser(message.chat.username, dictUser[message.chat.id])
-    db.saveSession(message.chat.id, dictUser.exportSession())
-
+        bot.send_message(message.chat.id, msg, reply_markup=markup)
+        #db.addCompsToUser(message.chat.username, dictUser[message.chat.id])
+        db.saveSession(message.chat.id, dictUser.exportSession())
+    else:
+        bot.send_message(message.chat.id, "Вы ещё не выбрали компетенции, относящиеся к вашему вопросу", reply_markup=drawMainMenu())
     print(dictUser.name)
 @bot.message_handler(func=lambda message: message.text == "Отправить")
 def submitAsk(message):
@@ -104,12 +107,14 @@ def submitAsk(message):
 
     if dictUser.waitingForQuestion:
         dictUser.waitingForQuestion=False
-    msg = "Вопрос отправлен!"
+        msg = "Вопрос отправлен!"
+        db.addQuestion(message.chat.id, dictUser.Quest, dictUser.QComps)
+        dictUser.QComps = []
+        print(dictUser.name)
+        db.saveSession(message.chat.id, dictUser.exportSession())
+    else:
+        msg="Вы ещё не задали вопрос и не можете его отправить"
     bot.send_message(message.chat.id, msg, reply_markup=drawMainMenu())
-    db.addQuestion(message.chat.id, dictUser.Quest, dictUser.QComps)
-    dictUser.QComps = []
-    print(dictUser.name)
-    db.saveSession(message.chat.id, dictUser.exportSession())
 
 #-------------------------------------------------------------
 @bot.message_handler(func=lambda message: message.text == "Ответить на вопрос")
