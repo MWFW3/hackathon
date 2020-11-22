@@ -2,7 +2,7 @@ import telebot
 import emoji
 from UserModule import User
 import database as db
-bot = telebot.TeleBot('1408437105:AAERPrZPLbkGoHN9HzObvYScyGBQNbwZzoY')
+bot = telebot.TeleBot('')
 
 #dictUser={}
 comps = db.competences
@@ -125,19 +125,22 @@ def askQuestions(message):
     markup.add("Хватит")
 
     msg = db.getQuestions(message.chat.id)
-    print("автор: " + str(msg[0][1]))
-    print(msg)
-    print("вопросы: " + str(msg))
-    try:
+    if len(msg)!=0:
+        print("автор: " + str(msg[0][1]))
+        print(msg)
+        print("вопросы: " + str(msg))
+        try:
+            msgt = msg[dictUser.curQuest][0]
+        except IndexError:
+            dictUser.curQuest = 0
         msgt = msg[dictUser.curQuest][0]
-    except IndexError:
-        dictUser.curQuest = 0
-    msgt = msg[dictUser.curQuest][0]
-    dictUser.curQuestioner = msg[dictUser.curQuest][1]
-    bot.send_message(message.chat.id, msgt, reply_markup=markup)
+        dictUser.curQuestioner = msg[dictUser.curQuest][1]
+        bot.send_message(message.chat.id, msgt, reply_markup=markup)
 
-    dictUser.curQuest += 1
-    print(dictUser.name)
+        dictUser.curQuest += 1
+        print(dictUser.name)
+    else:
+        bot.send_message(message.chat.id, "Нет актуальных вопросов", reply_markup=drawMainMenu())
     db.saveSession(message.chat.id, dictUser.exportSession())
 #-------------------------------------------------------------
 
