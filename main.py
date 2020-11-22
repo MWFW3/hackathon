@@ -26,6 +26,7 @@ def start(message):
 
 
     msg="Приветствую тебя студент, здесь ты можешь задавать вопросы другим студентам или отвечать сам на то, в чём разбираешься."
+    msg="Наш бот довольно понятен, но если боишься не разобраться, пиши /help. "
     msg+="Нажми \"добавить компетенцию\", чтобы указать, чем владеешь или сразу задай вопрос"
     bot.send_message(message.chat.id, msg, reply_markup=drawMainMenu())
 
@@ -33,6 +34,12 @@ def start(message):
     #print(user.exportSession())
 
 #----------------------------------------------------------------------------------------------------------
+@bot.message_handler(commands=['help'])
+def help(message):
+    helper=open("README", "r", encoding="utf8")
+    helpstring=helper.read()
+    bot.send_message(message.chat.id, helpstring)
+    helper.close()
 
 @bot.message_handler(func=lambda message: message.text == "Добавить компетенцию")
 def addComp(message):
